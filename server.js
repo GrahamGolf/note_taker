@@ -1,6 +1,6 @@
 var express = require("express");
 var htmlRoutes = require("./routes/html-routes.js");
-var apiRoutes = require("./routes/api-routes");
+var apiRoutes = require("./routes/api-routes.js");
 
 var app = express();
 var PORT = 3000;
@@ -9,8 +9,8 @@ var PORT = 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-app.use("/", htmlRoutes);
 app.use("/api", apiRoutes);
+app.use("/", htmlRoutes);
 
 
 app.listen(PORT, function() {

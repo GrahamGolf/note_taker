@@ -2,9 +2,9 @@ const router = require("express").Router();
 const fs = require("fs");
 
 
-router.get("/notes", function(req, res) {
+router.get("/notes", async function(req, res) {
     console.log("Hello");
-    fs.readFile("../db/db.json", "utf8", function(error, data) {
+    const readNotes = await fs.readFile("./db/db.json", "utf8", function(error, data) {
 
         if (error) {
           return console.log(error);
@@ -13,7 +13,7 @@ router.get("/notes", function(req, res) {
         console.log(data);
       
       });
-    return res.json(data);
+    res.send(JSON.stringify(readNotes)); //changed from parse to stringify
   });
 
 // router.post("/notes", function(req, res) {
