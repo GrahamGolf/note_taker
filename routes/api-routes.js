@@ -1,27 +1,48 @@
 const router = require("express").Router();
 const fs = require("fs");
+const uuidv1 = require("uuid/v1");
 
 
-router.get("/notes", async function(req, res) {
-    console.log("Hello");
-    const readNotes = await fs.readFile("./db/db.json", "utf8", function(error, data) {
-
+router.get("/notes", function(req, res) {
+    fs.readFile("./db/db.json", "utf8", function(error, data) {
         if (error) {
           return console.log(error);
         }
-      
-        console.log(data);
-      
+        res.send(JSON.parse(data));
       });
-    res.send(JSON.stringify(readNotes)); //changed from parse to stringify
   });
 
-// router.post("/notes", function(req, res) {
-//     return res.json(characters);
-//   });
-  
-//   // Displays a single character, or returns false
-// router.delete("/notes/:id", function(req, res) {
-// })
+router.post("/notes", async function(req, res) {
+    const title = req.body.title;
+    const text = req.body.text;
+
+    const createNewNote = {
+      title: title,
+      text: text,
+      id: uuidv1(),
+    };
+
+  fs.readFile("./db/db.json", "utf8", async function(error, data) {
+      if (error) {
+        return console.log(error);
+      }
+      
+      const notesArray = JSON.parse(data);
+
+      notesArray.push(createNewNote);
+
+      const updateDB = await fs.writeFile("./db/db.json", JSON.stringify(notesArray), function(err) {
+        if (err) {
+        return console.log(err);
+        }
+      });
+    res.send(updateDB);
+  });
+});
+
+
+
+router.delete("/notes/:id", function(req, res) {
+})
 
 module.exports = router;
