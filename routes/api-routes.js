@@ -13,6 +13,7 @@ router.get("/notes", function(req, res) {
   });
 
 router.post("/notes", async function(req, res) {
+    console.log(req.body);
     const title = req.body.title;
     const text = req.body.text;
 
@@ -22,12 +23,12 @@ router.post("/notes", async function(req, res) {
       id: uuidv1(),
     };
 
-  fs.readFile("./db/db.json", "utf8", async function(error, data) {
+  fs.readFile("./db/db.json", "utf8", async function(error, data) { //
       if (error) {
         return console.log(error);
       }
       
-      const notesArray = JSON.parse(data);
+      const notesArray = JSON.parse(data);//
 
       notesArray.push(createNewNote);
 
@@ -40,9 +41,30 @@ router.post("/notes", async function(req, res) {
   });
 });
 
-
-
 router.delete("/notes/:id", function(req, res) {
-})
+  fs.readFile("./db/db.json", "utf8", async function(error, data) { 
+    if (error) {
+      return console.log(error);
+    }
+    
+    const notesArray = JSON.parse(data);
+
+    const noteIndex = notesArray.findIndex(note => {return (note.id == req.params.id)});
+    let deleted = false;
+    if (noteIndex != -1) {
+      notesArray.splice(noteIndex, 1);
+      deleted = true;
+    };
+    res.json(deleted);
+  
+
+    const updateDB = await fs.writeFile("./db/db.json", JSON.stringify(notesArray), function(err) {
+      if (err) {
+      return console.log(err);
+      }
+    });
+  res.send(updateDB);
+});
+});
 
 module.exports = router;
